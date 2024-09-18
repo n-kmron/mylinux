@@ -58,3 +58,46 @@ We'll doing a FAT32
 * `mkswap /dev/sda3`
 * `mkfs.ext4 -T small /dev/sda4` the partition to compile our kernels (the T small option announce that we have a lot of small files so allows a bigger number of files because we cannot have more files that the number defined at the creation.
 
+Mount the partition
+
+* `mount /dev/sda4 /mnt/gentoo` to mount the 4th part of sda to a folder in the system. Without mounting folders on the hard disk, the data we provide is temp (in RAM). So, if we reboot, we lose our data. Now, our data on /mnt/gentoo is permanent.
+* `mkdir boot` create a folder to mount the boot (create the entry to the second partition)
+* `mount /dev/sda2 /mnt/gentoo/boot` 
+* `mount` recap of our mount's operations
+* `mkdir /mnt/gentoo/efi` to create a folder for the UEFI
+* `mount /dev/sda1 /mnt/gentoo/efi`
+
+* `swapon /dev/sda3` to activate the swap
+
+Now, we'll install the stage3 components which install /dev, /etc, ... dans /mnt/gentoo to have a complete system ON THE HARD DISK (and not in the RAM because now we have mounted partitions).
+
+rem: in a shell, we can use `scp <filename> <user>` to copy a file to another user on the computer
+
+* `scp <stage3filename.tar.xz> user1@<VM's IP>:/home/user1` do it from another terminal to copy the file from our computer to the /home/user1 repository on our VM
+
+Go back on the VM, the file is temp. because /home is not mounted
+
+* `mv /home/user1/<stage3filename> /mnt/gentoo
+
+The following command serve to extract the archive. Command found on the [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Stage#Installing_a_stage_file)
+
+* `tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner` 
+* `rm <stage3filename>` delete the archive
+
+* `cp --dereference /etc/resolve.conf /mnt/gentoo/etc`
+
+We have to mount the stage3 on our system by execute the commands provided by the [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Copy_DNS_info) 
+
+* `mount --types proc /proc /mnt/gentoo/proc`
+* `mount --rbind /sys /mnt/gentoo/sys`
+* `mount --make-rslave /mnt/gentoo/sys`
+* `mount --rbind /dev /mnt/gentoo/dev`
+* `mount --make-rslave /mnt/gentoo/dev`
+* `mount --bind /run /mnt/gentoo/run`
+* `mount --make-slave /mnt/gentoo/run`
+
+
+We have now a complete system on our root : /mnt/gentoo
+The packet gestionnary is ~imerge?, so we can install nano, vim etc with it
+
+WARNING : le root / is in the RAM so we have to change it
