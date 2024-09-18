@@ -102,7 +102,7 @@ The packet gestionnary is ~imerge?, so we can install nano, vim etc with it
 
 WARNING : le root / is in the RAM so we have to change it
 
-The [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Preparing_for_a_boot_loader) give the commands to do it
+The [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Entering_the_new_environment) give the commands to do it
 
 * `chroot /mnt/gentoo /bin/bash` change the root
 * `source /etc/profile`
