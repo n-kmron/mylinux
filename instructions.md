@@ -49,3 +49,12 @@ Now, in the fdisk console :
 Our partitions are created
 
 We can check it by doing `fdisk -l` and `lsblk`
+
+Let's create the Filesystem for our OS
+We'll doing a FAT32
+
+* `mkfs.vfat -F32 /dev/sda1`
+* `mkfs.vfat -F32 /dev/sda2`
+* `mkswap /dev/sda3`
+* `mkfs.ext4 -T small /dev/sda4` the partition to compile our kernels (the T small option announce that we have a lot of small files so allows a bigger number of files because we cannot have more files that the number defined at the creation.
+
