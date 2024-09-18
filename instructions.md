@@ -101,3 +101,11 @@ We have now a complete system on our root : /mnt/gentoo
 The packet gestionnary is ~imerge?, so we can install nano, vim etc with it
 
 WARNING : le root / is in the RAM so we have to change it
+
+The [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Preparing_for_a_boot_loader) give the commands to do it
+
+* `chroot /mnt/gentoo /bin/bash` change the root
+* `source /etc/profile`
+* `export PS1="(chroot) ${PS1}"`
+
+To save our work, we have to create a snapshot ! `VM (toolbar) > snapshot > take snapshot`
