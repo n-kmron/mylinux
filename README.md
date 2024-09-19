@@ -12,6 +12,12 @@ Launch VMware Workstation and create a new VM
 
 * Select 'custom' > Workstation > Install later > Select 'Linux 6.x kernel 64 bit'
 * Put a name to your VM
+* Select 2 processors (1 core per processor)
+* 4GB for RAM 
+* Use NAT
+* LSI Logic
+* SCSI
+* Create a new virtual disk and split into multiple files
 * Click on 'customize hardware' > New CD/DVD > Use ISO > Select `minimal installation cd` and check `connect at power on`
 * Create the VM
 
