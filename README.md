@@ -19,6 +19,11 @@ Now, we have to put the VM on UEFI instead of BIOS : VM (toolbar) > Settings > O
 
 You're ready to launch the VM !
 
+## Tutorial
+
+Follow the `instructions.md` file to start the tutorial
+
+
 ## Author
 
 * Cameron Noupoue
