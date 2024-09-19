@@ -33,18 +33,18 @@ After that, check your disk with `lsblk` (should be `/dev/sda/`)
 * `fdisk /dev/sda` to make our partitions
 
 Now, in the fdisk console :
-    * `g` to create a GPT partition
-    * `n` to create our first part (100MB for UEFI) +100M
-    * `p` to see what it looks like -> we see that the type is 'Linux filesystem' but we want UEFI so let's change it
-    * `t` to change the type (L to see the type's list) to the number 1
-    * `p` we can see now the type is UEFI/EFI
-    * `n` create our second part (200MB for the boot) +200M
-    * `n` create our third part (2GB for the swap) +2G
-    * `t` change the type of the third part to Linux swap (number 19)
-    * `n` create our fourth part (20GB fir gentoo) +20G
-    * `t` change the type to linux root (number 23 - linux root (x86_64 because we're in a 64bit environment)
-    * `n` create our last part (remaining size for our linux)
-    * `w` to save everything 
+* `g` to create a GPT partition
+* `n` to create our first part (100MB for UEFI) +100M
+* `p` to see what it looks like -> we see that the type is 'Linux filesystem' but we want UEFI so let's change it
+* `t` to change the type (L to see the type's list) to the number 1
+* `p` we can see now the type is UEFI/EFI
+* `n` create our second part (200MB for the boot) +200M
+* `n` create our third part (2GB for the swap) +2G
+* `t` change the type of the third part to Linux swap (number 19)
+* `n` create our fourth part (20GB fir gentoo) +20G
+* `t` change the type to linux root (number 23 - linux root (x86_64 because we're in a 64bit environment)
+* `n` create our last part (remaining size for our linux)
+* `w` to save everything 
 
 Our partitions are created
 
