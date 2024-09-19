@@ -78,7 +78,7 @@ rem: in a shell, we can use `scp <filename> <user>` to copy a file to another us
 
 Go back on the VM, the file is temp. because /home is not mounted
 
-* `mv /home/user1/<stage3filename> /mnt/gentoo
+* `mv /home/user1/<stage3filename> /mnt/gentoo`
 
 The following command serve to extract the archive. Command found on the [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Stage#Installing_a_stage_file)
 
