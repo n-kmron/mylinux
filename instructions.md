@@ -61,6 +61,7 @@ We'll doing a FAT32
 Mount the partition
 
 * `mount /dev/sda4 /mnt/gentoo` to mount the 4th part of sda to a folder in the system. Without mounting folders on the hard disk, the data we provide is temp (in RAM). So, if we reboot, we lose our data. Now, our data on /mnt/gentoo is permanent.
+* `cd /mnt/gentoo`
 * `mkdir boot` create a folder to mount the boot (create the entry to the second partition)
 * `mount /dev/sda2 /mnt/gentoo/boot` 
 * `mount` recap of our mount's operations
