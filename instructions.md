@@ -140,16 +140,42 @@ fr_BE.UTF-8 UTF-8
 * `eselect locale set 5` to set the 5th keyboard as the main one
 
 Reload the new environment 
-* `env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+* `env-update && source /etc/profile && export PS1="(chroot) ${PS1}"`
 
 Configure the kernel (source : [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel)
 
-* `emerge --ask sys-apps/pciutils
-* `emerge --ask sys-apps/usbutils
+* `emerge --ask sys-apps/pciutils`
+* `emerge --ask sys-apps/usbutils`
 * `lspci -k` to see the hardware - it will be useful to select which drivers we'll need
 * `lsusb` to see if we have devices connected on USB ports
 * `lsmod`to see which drivers we already have on the livecd
 
 WARNING : at the moment, the running kernel is still on the livecd, so in RAM
 
+Get the sources from the gentoo's kernel
 
+* `emerge --ask sys-kernel/gentoo-sources` to install sources into /usr/src
+
+In Linux, when you chose to install an app without a package manager, you'll have to download sources as a compressed file, extract them, edit the config, compile the app to get executable and after, install it.
+
+To compile and install our kernel from sources
+
+* `cd /usr/src/linux-6.6.47-gentoo`
+* `make menuconfig` to edit our config according to our needs (following the [hadbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel#Alternative:_Manual_configuration) + some of personal changes
+
+In the configuration panel,
+> Gentoo Linux > Support > support for init > systemd
+> Device drivers > Generic driver opt > Maintain a devtmpfs filesystem to mount at /dev
+> skip NMVE (we don't have it)
+> Enable block layer > partition type > advanced > EFI
+> File system > DOS/FAT/MSDOS > check the 2 NTFS
+> Device drivers > Firmware drivers > EFI > check the following...
+    - EFI Runtime config interface table version 2
+    - EFI bootloader control 
+    - EFI capsule loader 
+    - EFI Runtime service tests support
+
+> Device drivers > Fusion MPT > check Fustion MPT SCI Host drivers for SPI
+> Device drivers > Graphic support > Framebuffer devices > enter > EFI based
+> Device drivers > SCSI device support > SCSI low-level drivers > VMware PVSCSI driver support
+> Device drivers > MISC devices > VMware MCI driver
