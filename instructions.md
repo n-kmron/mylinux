@@ -116,3 +116,40 @@ export PS1="(chroot) ${PS1}"
 ```
 
 To save our work, we have to create a snapshot ! `VM (toolbar) > snapshot > take snapshot`
+
+
+We have to chose a profile (systemd)
+
+* `emerge-webrsync`
+* `eselect profile list` to have the list of available profiles (our is 22)
+* `eselect profile set 22` set the systemd profile as default
+
+Let's change the timezone
+* `ls -l /usr/share/zoneinfo/Europe` see if our timezone is available
+* `ln -sf ../usr/share/zoneinfo/Europe/Brussels /etc/localetime` create a software link between the timezone and /etc/localetime
+
+We also can custom our keyboard. We did it before, but it was only in RAM, let's do it on the disk
+
+* `nano /etc/locale.gen` we have to keep an UTF8 keyboard so let's uncomment one of them and add a line like 
+```
+fr_BE.UTF-8 UTF-8
+```
+
+* `locale-gen` to generate binary files for our keyboards
+* `eselect locale list` to see which keyboards do we have
+* `eselect locale set 5` to set the 5th keyboard as the main one
+
+Reload the new environment 
+* `env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+
+Configure the kernel (source : [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel)
+
+* `emerge --ask sys-apps/pciutils
+* `emerge --ask sys-apps/usbutils
+* `lspci -k` to see the hardware - it will be useful to select which drivers we'll need
+* `lsusb` to see if we have devices connected on USB ports
+* `lsmod`to see which drivers we already have on the livecd
+
+WARNING : at the moment, the running kernel is still on the livecd, so in RAM
+
+
