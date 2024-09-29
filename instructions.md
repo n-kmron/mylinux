@@ -165,17 +165,26 @@ To compile and install our kernel from sources
 
 In the configuration panel,
 > Gentoo Linux > Support > support for init > systemd
+
 > Device drivers > Generic driver opt > Maintain a devtmpfs filesystem to mount at /dev
+
 > skip NMVE (we don't have it)
+
 > Enable block layer > partition type > advanced > EFI
+
 > File system > DOS/FAT/MSDOS > check the 2 NTFS
+
 > Device drivers > Firmware drivers > EFI > check the following...
     - EFI Runtime config interface table version 2
     - EFI bootloader control 
     - EFI capsule loader 
     - EFI Runtime service tests support
 
+
 > Device drivers > Fusion MPT > check Fustion MPT SCI Host drivers for SPI
+
 > Device drivers > Graphic support > Framebuffer devices > enter > EFI based
+
 > Device drivers > SCSI device support > SCSI low-level drivers > VMware PVSCSI driver support
+
 > Device drivers > MISC devices > VMware MCI driver
