@@ -188,3 +188,16 @@ In the configuration panel,
 > Device drivers > SCSI device support > SCSI low-level drivers > VMware PVSCSI driver support
 
 > Device drivers > MISC devices > VMware MCI driver
+
+
+At the end of our configuration, it's important to verify if "FUSION MPT" is on
+
+* `cat .config | grep FUSION` and check if we see 'CONFIG_FUSION=y'
+
+Now, we're able to compile our kernel (the better is to write the time before and after to have the total time of the compilation)
+
+This compilation will product object's files and create more than 10GB and then reduct to an executable of 10MB.
+
+* `date` to have the date before
+* `make -j 2 ; date` to compile with 2 cores and at the end, get the date`
+
