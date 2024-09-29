@@ -106,7 +106,7 @@ WARNING : le root / is in the RAM so we have to change it
 The [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base#Entering_the_new_environment) give the commands to do it
 
 ```
-chroot /mnt/gentoo /bin/bash` change the root
+chroot /mnt/gentoo /bin/bash
 ```
 ```
 source /etc/profile
@@ -201,3 +201,5 @@ This compilation will product object's files and create more than 10GB and then 
 * `date` to have the date before
 * `make -j 2 ; date` to compile with 2 cores and at the end, get the date`
 
+For me, complilation started at 15:54:40 and done at 
+For a total time of : 
