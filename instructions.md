@@ -199,7 +199,7 @@ Now, we're able to compile our kernel (the better is to write the time before an
 This compilation will product object's files and create more than 10GB and then reduct to an executable of 10MB.
 
 * `date` to have the date before
-* `make -j 2 ; date` to compile with 2 cores and at the end, get the date`
+* `make -j 2 ; date` to compile with 2 cores and at the end, get the date
 
-For me, complilation started at 15:54:40 and done at 
-For a total time of : 
+For me, complilation started at 15:54:40 and done at 16:23:35
+For a total time of : 00:28:45
