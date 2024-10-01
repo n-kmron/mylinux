@@ -142,7 +142,7 @@ fr_BE.UTF-8 UTF-8
 Reload the new environment 
 * `env-update && source /etc/profile && export PS1="(chroot) ${PS1}"`
 
-Configure the kernel (source : [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel)
+Configure the kernel (source : [gentoo handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel))
 
 * `emerge --ask sys-apps/pciutils`
 * `emerge --ask sys-apps/usbutils`
@@ -161,7 +161,7 @@ In Linux, when you chose to install an app without a package manager, you'll hav
 To compile and install our kernel from sources
 
 * `cd /usr/src/linux-6.6.47-gentoo`
-* `make menuconfig` to edit our config according to our needs (following the [hadbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel#Alternative:_Manual_configuration) + some of personal changes
+* `make menuconfig` to edit our config according to our needs (following the [hadbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel#Alternative:_Manual_configuration) + some of personal changes)
 
 In the configuration panel,
 > Gentoo Linux > Support > support for init > systemd
@@ -210,7 +210,7 @@ For a total time of : 00:28:45
 
 We now have the kernel exe in /usr/src/linux-6.6.47-gentoo/arch/x86/boot/bzImage
 
-Let's configure the fstab to define partitions, disks, swap etc automaticly on the reboot ([handbook](link#About_fstab)).
+Let's configure the fstab to define partitions, disks, swap etc automaticly on the reboot ([handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/System#About_fstab)).
 
 * `emerge sys-kernel/installkernel`
 * `emerge dracut`
@@ -234,7 +234,7 @@ We have to create a DHCP client
 * `emerge dhcpcd`
 * `passwd`
 
-Let's configure the bootloader ([handbook](link#Default:_GRUB))
+Let's configure the bootloader ([handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Bootloader#Default:_GRUB))
 
 Compile GRUB
 
@@ -256,7 +256,7 @@ We can use an utilitary to make a config
 
 Do a snapshot before reboot !
 
-Let's reboot the system ([handbook](link#Rebooting_the_system))
+Let's reboot the system ([handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Bootloader#Rebooting_the_system))
 
 * `exit`
 * `cd`
