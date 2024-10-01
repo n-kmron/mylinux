@@ -185,10 +185,13 @@ In the configuration panel,
 
 > Device drivers > Graphic support > Framebuffer devices > enter > EFI based
 
+> Device drivers > Graphic support > Framebuffer devices > support for frame buffer device > EFI based frame buffer support (enable it)
+
 > Device drivers > SCSI device support > SCSI low-level drivers > VMware PVSCSI driver support
 
 > Device drivers > MISC devices > VMware MCI driver
 
+>  Processor type and features > EFI runtime service support > EFI stub support > disable (space)
 
 At the end of our configuration, it's important to verify if "FUSION MPT" is on
 
@@ -203,3 +206,60 @@ This compilation will product object's files and create more than 10GB and then 
 
 For me, complilation started at 15:54:40 and done at 16:23:35
 For a total time of : 00:28:45
+
+
+We now have the kernel exe in /usr/src/linux-6.6.47-gentoo/arch/x86/boot/bzImage
+
+Let's configure the fstab to define partitions, disks, swap etc automaticly on the reboot ([handbook](link#About_fstab)).
+
+* `emerge sys-kernel/installkernel`
+* `emerge dracut`
+
+* `nano /usr/lib/kernel/install.conf`
+    -> layout=grub
+    -> initrd_generator=dracut
+    -> don't touch the rest
+
+* `nano /etc/fstab`
+    -> /dev/sda4    /   ext4    defaults,noatime    0 1
+    -> /dev/sda3    none    swap    sw  0 0
+
+
+We can give a name to our kernel
+
+* `echo NOUPOUE2024 > /etc/hostname`
+
+We have to create a DHCP client
+
+* `emerge dhcpcd`
+* `passwd`
+
+Let's configure the bootloader ([handbook](link#Default:_GRUB))
+
+Compile GRUB
+
+* `emerge sys-boot/grub`
+* `echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf`
+
+Install GRUB
+
+* `grub-install --target=x86_64-efi --efi-directory=/efi --removable`
+* `cd /efi/EFI/BOOT` see if there is a file
+* `cd /boot/grub` see if there is some files
+
+
+We can use an utilitary to make a config
+
+* `cp /usr/src/linux-6.6.47-gentoo/arch/x86/boot/bzImage /boot/kernel-6.6.47-NOUPOUE`
+* `uname -a`
+* `grub-mkconfig -o /boot/grub/grub.cfg`
+
+Do a snapshot before reboot !
+
+Let's reboot the system ([handbook](link#Rebooting_the_system))
+
+* `exit`
+* `cd`
+* `umount -l /mnt/gentoo/dev{/shm,/pts,}`
+* `umount -lR /mnt/gentoo`
+* `reboot`
