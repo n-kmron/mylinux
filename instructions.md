@@ -191,11 +191,14 @@ In the configuration panel,
 
 > Device drivers > MISC devices > VMware MCI driver
 
->  Processor type and features > EFI runtime service support > EFI stub support > disable (space)
+> Processor type and features > EFI runtime service support > EFI stub support > disable (space)
+
+> Device Drivers > Graphics support > Console display driver support > Framebuffer Console support (enable)
 
 At the end of our configuration, it's important to verify if "FUSION MPT" is on
 
 * `cat .config | grep FUSION` and check if we see 'CONFIG_FUSION=y'
+* `cat .config | grep CONFIG_FRAMEBUFFER_CONSOLE` and check if it is enabled
 
 Now, we're able to compile our kernel (the better is to write the time before and after to have the total time of the compilation)
 
@@ -233,13 +236,14 @@ We have to create a DHCP client
 
 * `emerge dhcpcd`
 * `passwd`
+* `mkdir -p /efi/EFI/Gentoo`
 
 Let's configure the bootloader ([handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Bootloader#Default:_GRUB))
 
 Compile GRUB
 
-* `emerge sys-boot/grub`
 * `echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf`
+* `emerge sys-boot/grub`
 
 Install GRUB
 
