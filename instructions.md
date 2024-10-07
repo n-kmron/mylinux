@@ -126,7 +126,7 @@ We have to chose a profile (systemd)
 
 Let's change the timezone
 * `ls -l /usr/share/zoneinfo/Europe` see if our timezone is available
-* `ln -sf ../usr/share/zoneinfo/Europe/Brussels /etc/localetime` create a software link between the timezone and /etc/localetime
+* `ln -sf ../usr/share/zoneinfo/Europe/Brussels /etc/localtime` create a software link between the timezone and /etc/localetime
 
 We also can custom our keyboard. We did it before, but it was only in RAM, let's do it on the disk
 
