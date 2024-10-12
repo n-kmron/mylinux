@@ -270,10 +270,12 @@ Let's reboot the system ([handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/
 
 
 After the reboot, we have to do some config :
+
+But first, login with your credentials : `root` and `YOURPASSWORD2024` (be careful, the keyboard is in QWERTY)
 * `rm /etc/vconsole.conf`
-* `systemd-firstboot --prompt-keymap`
-* `systemctl enable dhcpcd`
-* `systemctl start sshd`
-* `systemctl enable ssh`
+* `systemd-firstboot --prompt-keymap` to have the right keyboard configuration
+* `systemctl enable dhcpcd` to allow dhcp
+* `systemctl start sshd` to start ssh server
+* `systemctl enable ssh` to start ssh server for each reboot
 
 You can now pass to the `mylinux.md`
