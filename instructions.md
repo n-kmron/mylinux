@@ -267,3 +267,13 @@ Let's reboot the system ([handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/
 * `umount -l /mnt/gentoo/dev{/shm,/pts,}`
 * `umount -lR /mnt/gentoo`
 * `reboot`
+
+
+After the reboot, we have to do some config :
+* `rm /etc/vconsole.conf`
+* `systemd-firstboot --prompt-keymap`
+* `systemctl enable dhcpcd`
+* `systemctl start sshd`
+* `systemctl enable ssh`
+
+You can now pass to the `mylinux.md`
