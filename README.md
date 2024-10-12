@@ -27,8 +27,9 @@ You're ready to launch the VM !
 
 ## Tutorial
 
-Follow the `instructions.md` file to start the tutorial with a setup for gentoo (gentoo will serve as a basis to have a minimal environment in order to build our own VM from sources).
+Follow the `instructions.md` file to start the tutorial with a setup for gentoo (gentoo will serve as a basis to have a minimal environment in order to build our own OS from sources).
 
+When `instructions.md` is ok, you can follow `mykernel.md` to start creating the OS
 
 ## Author
 
