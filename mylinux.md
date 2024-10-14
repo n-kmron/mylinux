@@ -36,4 +36,51 @@ wget https://busybox.net/downloads/busybox-1.34.0.tar.bz2
 * `mkdir -p /mnt/mylinux/usr/share/man/{man1,man2,man3,man4,man5,man6,man7,man8}`
 * `mkdir -p /mnt/mylinux/var/{lock,log,run,spool}`
 
-* `ln -s /mnt/mylinux/usr/share/man man` create a software link between ... and ...
+* `ln -s /mnt/mylinux/usr/share/man man` create a software link between
+
+3) Glibc
+
+* `tar -xvf glibc-2.39.tar.gz` extract sources
+* `CFLAGS=”-O2 -U_FORTIFY_SOURCE -march=x86-64 -pipe” ../glibc-2.39/configure --enable-addons --prefix=/usr --with-headers=/usr/include` to generate the makefile in build folder
+
+Now let's compile the sources 
+* `date` to have the starting time
+* `make -j2; date` to compile and have the ending time
+
+For me, it started at 15:39:22 and finished at 15:50:00 so a total time of 00:20:38
+
+To finish the installation, we have to install our glibc into `/mnt/mylinux`
+
+* `make install_root=/mnt/mylinux install
+
+
+4) Busybox
+
+* `tar -xvjf busybox-1.34.0.tar.bz2` to extract sources (xvjf because its .bz2)
+* `cd busybox-1.34.0 && make menuconfig` to save the config (if the compilation fail, remove utilitaries which create conflicts
+* `make -j 2` to compile sources
+* `make CONFIG_PREFIX=/mnt/mylinux install`
+
+5) Creation configuration's files into `/mnt/mylinux/etc`
+
+* `cd /mnt/mylinux/etc`
+* `nano passwd` needs to contain : 
+```
+root::0:0:root:/root:/bin/ash
+```
+* `nano fstab` needs to contain :
+```
+/proc /proc proc defaults
+```
+* `/mnt/mylinux/bin/busybox dumpkmap > mykeyboard.kmap` to save our keyboard disposition
+* `nano /mnt/mylinux/etc/rc` to create a boot script with : 
+> #!/bin/ash
+/bin/mount -av
+/bin/hostname YOURNAME
+/sbin/loadkmap < /etc/mykeyboard.kmap
+
+* `nano inittab` needs to contain :
+```
+::sysinit:/etc/rc
+tty1:3:respawn:/bin/ash -l
+```
