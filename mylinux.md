@@ -15,7 +15,7 @@ wget http://ftp.gnu.org/gnu/libc/glibc-2.39.tar.gz
 
 * `kernel` in version 6.6.15
 ```
-wget https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.15.tar.gz
+wget https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.6.15.tar.gz
 ```
 
 * `busybox` in version 1.34.0
