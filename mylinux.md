@@ -74,13 +74,23 @@ root::0:0:root:/root:/bin/ash
 ```
 * `/mnt/mylinux/bin/busybox dumpkmap > mykeyboard.kmap` to save our keyboard disposition
 * `nano /mnt/mylinux/etc/rc` to create a boot script with : 
-> #!/bin/ash
+```
+#!/bin/ash
 /bin/mount -av
 /bin/hostname YOURNAME
 /sbin/loadkmap < /etc/mykeyboard.kmap
+```
 
 * `nano inittab` needs to contain :
 ```
 ::sysinit:/etc/rc
 tty1:3:respawn:/bin/ash -l
 ```
+
+6) Kernel
+
+* `tar -xvf linux-6.6.15.tar.gz && cd linux-6.6.15` to extract sources
+* `make defconfig` to configurate with default values
+* `make menuconfig` add same configuration as gentoo kernel (see instructions.md)
+* `date` to have the starting time
+* `make -j 2; date` to compile and have the ending time
