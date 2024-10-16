@@ -166,11 +166,11 @@ To compile and install our kernel from sources
 In the configuration panel,
 > Gentoo Linux > Support > support for init > systemd
 
-> Device drivers > Generic driver opt > Maintain a devtmpfs filesystem to mount at /dev
+> Device drivers > Generic driver options > Maintain a devtmpfs filesystem to mount at /dev
 
 > skip NMVE (we don't have it)
 
-> Enable block layer > partition type > advanced > EFI
+> Enable the block layer > partition type > advanced > EFI GUID partition support
 
 > File system > DOS/FAT/MSDOS > check the 2 NTFS
 
@@ -183,8 +183,6 @@ In the configuration panel,
 
 > Device drivers > Fusion MPT > check Fustion MPT SCI Host drivers for SPI
 
-> Device drivers > Graphic support > Framebuffer devices > enter > EFI based
-
 > Device drivers > Graphic support > Framebuffer devices > support for frame buffer device > EFI based frame buffer support (enable it)
 
 > Device drivers > SCSI device support > SCSI low-level drivers > VMware PVSCSI driver support
@@ -194,6 +192,10 @@ In the configuration panel,
 > Processor type and features > EFI runtime service support > EFI stub support > disable (space)
 
 > Device Drivers > Graphics support > Console display driver support > Framebuffer Console support (enable)
+
+> File systems > FUSE (Filesystem in Userspace) support
+
+> File systems > Pseudo filesystems > EFI Variable filesystem
 
 At the end of our configuration, it's important to verify if "FUSION MPT" is on
 
