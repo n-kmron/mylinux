@@ -94,3 +94,20 @@ tty1:3:respawn:/bin/ash -l
 * `make menuconfig` add same configuration as gentoo kernel (see instructions.md)
 * `date` to have the starting time
 * `make -j 2; date` to compile and have the ending time
+
+For me, it started 16:36:04 at and finished at 17:01:25, so a total time of 00:25:21
+
+
+Now, we can copy this kernel into our boot partition and giving a name
+
+* `cp /usr/src/linux-6.6.15/arch/x86/boot/bzImage /boot/kernel-linux-6.6.15-NOUPOUE`
+
+We now need to update the grub 
+
+* `grub-mkconfig -o /boot/grub/grub.cfg`
+
+And now, we have to change the `grub.cfg` file to allow the OS on /dev/sda5:
+
+* `/kernel-6.6.15-NOUPOUE root=/dev/sda5 console=tty0 console=ttyS1 rootfstype=ext4 rw`
+
+And we need to activate in the VM settings the tty1 console : when the VM is shutted down > VM > Settings > Serial port > use output file (put a path on your physical machine)
