@@ -6,6 +6,11 @@ Let's start...
 
 We won't use any packet manager from now, we'll downloads sources into `/usr/src`
 
+First before, we need to mount our partition
+
+* `mount /dev/sda1 /efi`
+* `mount /dev/sda2 /boot`
+
 1) Download sources (on /dev/sda4)
 
 * `glibc` let's use version 2.39 (the same as the gentoo VM (see `ldd --version`) 
@@ -94,6 +99,7 @@ tty1:3:respawn:/bin/ash -l
 * `make menuconfig` add same configuration as gentoo kernel (see instructions.md)
 * `date` to have the starting time
 * `make -j 2; date` to compile and have the ending time
+* `make modules_install` to install modules related to our kernel
 
 For me, it started 16:36:04 at and finished at 17:01:25, so a total time of 00:25:21
 
@@ -102,7 +108,7 @@ Now, we can copy this kernel into our boot partition and giving a name
 
 * `cp /usr/src/linux-6.6.15/arch/x86/boot/bzImage /boot/kernel-linux-6.6.15-NOUPOUE`
 
-We now need to update the grub 
+We now need to update the grub (you'll maybe need to create /grub folder)
 
 * `grub-mkconfig -o /boot/grub/grub.cfg`
 
