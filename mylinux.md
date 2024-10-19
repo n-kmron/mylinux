@@ -117,3 +117,7 @@ And now, we have to change the `grub.cfg` file to allow the OS on /dev/sda5:
 * `/kernel-6.6.15-NOUPOUE root=/dev/sda5 console=tty0 console=ttyS1 rootfstype=ext4 rw`
 
 And we need to activate in the VM settings the tty1 console : when the VM is shutted down > VM > Settings > Serial port > use output file (put a path on your physical machine)
+
+You can now reboot and you should have your new kernel to use !
+
+If the config when you launch your new boot is not right : actually no hostname, wrong keyboard, it's probably due to your `etc/rc` script, verify rights and execute it !
