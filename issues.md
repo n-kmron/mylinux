@@ -10,3 +10,5 @@
 * During the first step, I had issues in my kernel configuration (make menuconfig) so when I changed some things, I forgot to copy the bzImage into /boot so when I booted my kernel, the changes didn't appear.
 
 * During the step 2, /dev/sda1 and /dev/sda2 were not mounted on /efi and /boot so, my grub was not up to date.
+
+* At the end of step 2, when I reboot on my new kernel, my keyboard was still qwerty, because the `/etc/rc` script was not correctly executed, so I had to reput the commands to make everything good.
