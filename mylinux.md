@@ -121,3 +121,5 @@ And we need to activate in the VM settings the tty1 console : when the VM is shu
 You can now reboot and you should have your new kernel to use !
 
 If the config when you launch your new boot is not right : actually no hostname, wrong keyboard, it's probably due to your `etc/rc` script, verify rights and execute it !
+
+To boot your kernel on a USB key, follow the instructions on `bootable_key.md`
