@@ -37,7 +37,7 @@ First, download `vmlinuz-generic` and `initrd.img`. After, send them to the VM u
 When it's done, move them into sdb1 (so /mnt/usb-boot)
 
 * `mv /home/initrd.img-6.2.0-32-generic /mnt/usb-boot/EFI/BOOT/`
-* `mv /home/vmlinuz-6.2.0-32-generic /mnt/usb-boot/EFI/BOOT/'
+* `mv /home/vmlinuz-6.2.0-32-generic /mnt/usb-boot/EFI/BOOT/`
 
 Now, we'll download sources from syslinux
 
@@ -57,13 +57,19 @@ And copy the files just found into /EFI/BOOT
 We can create a `syslinux.cfg` file into /EFI/BOOT
 
 * `nano /mnt/usb-boot/EFI/BOOT/syslinux.cfg`
-># Use the UUID of sdb2 (mylinux on USB) obtained with `blkid`
+> ### Use the UUID of sdb2 (mylinux on USB) obtained with `blkid`
 > PROMPT 0
+
 > TIMEOUT 10
+
 > DEFAULT YOURNAME
+
 > LABEL YOURNAME
+
 >    LINUX vmlinuz-6.2.0-32-generic
+
 >    APPEND rw root=UUID=...
+
 >    INITRD initrd.img-6.2.0-32-generic
 
 We are now ready to copy our kernel root on the second partition of our usb driver
