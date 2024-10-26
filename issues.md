@@ -16,3 +16,11 @@
 * At the beginning of step 3, my USB key was not recognized by the VM, and the VM was forced to quit each time I plugged the key. I had to reformat multiple times and activate USB 2.0 in the VM settings to make it work
 
 * At the beginning of step 3 also, I was not able to etablish a ssh connection between my Gentoo and my laptop using user1 (the user was in the `wheel' group). So I had to edit the settings of `/etc/ssh/sshd_config` to allow root to connect on ssh 
+
+* On my bootable key, I was not able to ping because there's no Internet connection. Possibles solutions :
+    - I have to be connected by Ethernet (not wifi) to have a network card available and put an ip on it
+    - Create a /etc/RESOLV.conf for DNS and a script for the DHCP to automatise following tasks (first check I have an internet connection) :
+        * check network card with `ip addr`
+        * activate this interface with `ip link set eth0 up`
+        * ask for an ip to the DHCP with `udhcpc -i eth0`
+        * put the ip gift by DHCP on static with `ip addr add <ip> <mask>`
