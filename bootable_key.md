@@ -86,3 +86,14 @@ WARNING : please do a snapshot before !
 And now, let's try our key! 
 
 * `poweroff`
+
+To use dhcp with your new OS, you need to check you are connected in LAN with your computer and check you have an interface.
+
+Up your interface 
+* `ip link set <int> up`
+
+After, launch your dhcp
+
+* `udhcpc -i <int> -s /usr/share/udhcpc/default.script`
+
+You maybe have to create this script and add a chmod +x on it.
