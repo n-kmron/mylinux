@@ -24,3 +24,5 @@
         * activate this interface with `ip link set eth0 up`
         * ask for an ip to the DHCP with `udhcpc -i eth0`
         * put the ip gift by DHCP on static with `ip addr add <ip> <mask>`
+
+Doing the docker installation, my computer clock is broke, so when I wanted to emerge docker, it failed because the certificate was not good due to the wrong hour on my computer, so I had to change it manually
