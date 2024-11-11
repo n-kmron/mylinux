@@ -14,22 +14,42 @@ WARNING: we now working on our Gentoo kernel to edit our personal one !
 
 * `make menuconfig` and add these options (no modules (M), only \*) 
 
-> General setup > POSIX Message Queues
-
 > General setup > BRF subsystem > Enable bpf() system call
 
-> General setup > Control Group support > Memory controller + IO controller + PIDs controller + Freezer controller + HugeTLB controller + Cpuset controller + Include legacy /proc/<pid>/cpuset file + Device controller + Simple CPU accounting controller + Perf controller + Support for eBPF programs attached to cgroups
+> General setup > Control Group support > Memory controller + Support for eBPF programs attached to cgroups
 
-> General setup > Control Group support > CPU controller > Group scheduling for SCHED_OTHER + CPU bandwidth provisionning for FAIR_GROUP_SCHED + Group scheduling for SCHED_RR/FIFO
+> General setup > Control Group support > CPU controller > CPU bandwidth provisionning for FAIR_GROUP_SCHED + Group scheduling for SCHED_RR/FIFO
 
-> 
+> General setup > Namespaces support > User namespace
 
->
+> Enable the block layer > Block layer bio throttling support
 
->
+> Networking support > Networking options > Networking packet filtering framework (Netfilter) > Advances netfilter configuration > Core Netfilter Configuration > TFTP protocol support
 
->
+> Networking support > Networking options > Networking packet filtering framework (Netfilter) > Advances netfilter configuration > Core Netfilter Configuration > ***Xtables matches *** > "addrtype" address type match support
 
->
+> Networking support > Networking options > Networking packet filtering framework (Netfilter) > Advances netfilter configuration > IP virtual server support > *** IPVS transport protocol load balancing support *** > TCP load balancing support + UDP load balancing support
 
->
+> Networking support > Networking options > Networking packet filtering framework (Netfilter) > Advances netfilter configuration > Core Netfilter Configuration > ***Xtables matches *** > "ipvs" match support
+
+> Networking support > Networking options > Networking packet filtering framework (Netfilter) > Advances netfilter configuration > IP virtual server support > *** IPVS scheduler *** > round-robin scheduling
+
+ > Networking support > Networking options > Networking packet filtering framework (Netfilter) > Advances netfilter configuration > IP virtual server support > *** IPVS MH scheduler *** > Netfilter connection tracking
+
+> Networking support > Networking options > Networking packet filtering framework (Netfilter) > Advances netfilter configuration > IP: Netfilter Configuration > iptables NAT support + MASQUERADE target support + NETMAP target support + REDIRECT target support
+
+> Networking support > Networking options > IP: ESP transformation + 802.1Q/802.1ad VLAN support + 802.1d Ethernet Bridging > VLAN filtering
+
+> Networking support > Networking options > L3 Master device support
+
+> Device Drivers > Multiple devices driver support (RAID and LVM) > Device mapper support > Thin provisioning target
+
+> Device Drivers > Network device support > Dummy net driver support + MAC-VLAN support + Virtual eXtensible Local Area Network (VXLAN) + Virtual ethernet pair device
+
+> File systems > Overlay filesystem support
+
+> Security options > Enable access key retention support > Enable register of persistent per-UID keyrings
+
+> Security options > Enable access key retention support > ENCRYPTED KEYS
+
+> Security options > Enable access key retention support > Diffie-Hellman operations on retained keys
