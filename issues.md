@@ -25,4 +25,8 @@
         * ask for an ip to the DHCP with `udhcpc -i eth0`
         * put the ip gift by DHCP on static with `ip addr add <ip> <mask>`
 
-Doing the docker installation, my computer clock is broke, so when I wanted to emerge docker, it failed because the certificate was not good due to the wrong hour on my computer, so I had to change it manually
+* Doing the docker installation, my computer clock is broke, so when I wanted to emerge docker, it failed because the certificate was not good due to the wrong hour on my computer, so I had to change it manually
+
+* Building my Dockerfile with alpine, I put a capslock name as my image name so the built did not work
+
+* When I wanted to run this image I just built, it failed because in the Dockerfile, I also used capslock for my name
