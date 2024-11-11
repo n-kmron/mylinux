@@ -56,8 +56,11 @@ WARNING: we now working on our Gentoo kernel to edit our personal one !
 
 ## Compiling and setup the new version for our kernel 
 
-* `make && make modules_install`
+* `date` to have the starting date
 
+* `make -j 2 && make modules_install; date` to compile and have the ending date
+
+For mine, the compilation started at 17:34:56 and ends at 18:14:08, so a total time of 00:39:12. 
 * `lsblk` to remount our missing partitions
 
 * `mount /dev/sda2 /boot`
