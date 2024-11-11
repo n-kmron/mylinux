@@ -53,3 +53,33 @@ WARNING: we now working on our Gentoo kernel to edit our personal one !
 > Security options > Enable access key retention support > ENCRYPTED KEYS
 
 > Security options > Enable access key retention support > Diffie-Hellman operations on retained keys
+
+## Compiling and setup the new version for our kernel 
+
+* `make && make modules_install`
+
+* `lsblk` to remount our missing partitions
+
+* `mount /dev/sda2 /boot`
+
+* `cp /usr/src/linux/arch/x86/boot/bzImage /boot/kernel-6.6.15-NOUPOUE-DOCKER` to place a new kernel on our boot
+
+* `grub-mkconfig -o /boot/grub/grub.cfg` to edit our grub.cfg
+
+* `nano /boot/grub/grub.cfg` and edit our kernel lines like : 
+
+> to be continued
+
+* `emerge app-containers/docker app-containers/docker-cli app-containers/docker-compose`
+
+* `systemctl enable docker`
+
+* `reboot`
+
+## Try docker on our kernel
+
+Now, boot on your personal kernel and try to do the following : 
+
+* `docker search ubuntu`
+
+If everything works, you have docker on your kernel ! Congratulation
