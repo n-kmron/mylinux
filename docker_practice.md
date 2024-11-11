@@ -66,7 +66,14 @@ In the `index.html` file, we need to edit the following line :
 > const ws = new WebSocket(´ws://backend:3000/ws’);
 
 To replace by : 
-> const ws = new WebSocket(´ws://\<our-ip\>:3000/ws’);
+> const ws = new WebSocket(´ws://backendNOUPOUE:3000/ws’);
+
+
+In the `nginx.conf` file, we need to edit the following line : 
+> proxy_pass http://backend:3000;
+
+To replace by : 
+> proxy_pass http://backendNOUPOUE:3000;
 
 You must write the 3 dockerfiles. The base images will be: nginx for the frontend (use
 your personal version, the one you were assigned during the theoretical course!), 
@@ -116,9 +123,7 @@ Let's write 3 dockerfiles (frontend, backend and database)
 >
 > EXPOSE 27017
 
-Create a user in the MongoDB database.
-
-* `docker network create —driver bridge noupoue-network` to create a docker bridge network to be able to communicate between your
+* `docker network create —-driver bridge noupoue-network` to create a docker bridge network to be able to communicate between your
 containers using their names
 
 Let's start this application using docker run commands
@@ -127,8 +132,8 @@ Let's start this application using docker run commands
 * `docker build -t backendnoupoue:1.0 ./backendNOUPOUE`
 * `docker build -t frontendnoupoue:1.0 ./frontendNOUPOUE`
 
-* `docker run --name databaseNOUPOUE --network noupoue-network -e MONGO_INITDB_ROOT_USERNAME=cameron -e MONGO_INITDB_ROOT_PASSWORD=password -e MONGO_INITDB_DATABASE=chatdb -d databasecameron:1.0`
-* `docker run --name backendNOUPOUE --network noupoue-network -e DB_USER=cameron -e DB_PASS=password -e DB_HOST=databaseNOUPOUE -p 3000:3000 -d backendnoupoue:1.0`
+* `docker run --name databaseNOUPOUE --network noupoue-network -e MONGO_INITDB_ROOT_USERNAME=cameron -e MONGO_INITDB_ROOT_PASSWORD=password -d databasenoupoue:1.0`
+* `docker run --name backendNOUPOUE --network noupoue-network -e DB_USER=cameron -e DB_PASS=password -p 3000:3000 -d backendnoupoue:1.0`
 * `docker run --name frontendNOUPOUE --network noupoue-network -p 8080:80 -d frontendnoupoue:1.0`
 
 * `docker ps` to see if everything is good
