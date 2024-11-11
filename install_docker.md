@@ -71,7 +71,9 @@ For mine, the compilation started at 17:34:56 and ends at 18:14:08, so a total t
 
 * `nano /boot/grub/grub.cfg` and edit our kernel lines like : 
 
-> to be continued
+> /kernel-6.6.15-NOUPOUE root=/dev/sda5 console=tty0 console=ttyS1 rootfstype=ext4 rw
+
+> /kernel-6.6.15-NOUPOUE-DOCKER root=/dev/sda5 console=tty0 console=ttyS1 rootfstype=ext4 rw
 
 * `emerge app-containers/docker app-containers/docker-cli app-containers/docker-compose`
 
