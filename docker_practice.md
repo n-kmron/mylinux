@@ -133,7 +133,7 @@ Let's start this application using docker run commands
 * `docker build -t frontendnoupoue:1.0 ./frontendNOUPOUE`
 
 * `docker run --name databaseNOUPOUE --network noupoue-network -e MONGO_INITDB_ROOT_USERNAME=cameron -e MONGO_INITDB_ROOT_PASSWORD=password -d databasenoupoue:1.0`
-* `docker run --name backendNOUPOUE --network noupoue-network -e DB_USER=cameron -e DB_PASS=password -e DB_HOST=databaseNOUPOUE -p 3000:3000 -d backendnoupoue:1.0`
+* `docker run --name backendNOUPOUE --network noupoue-network -e MONGO_URI="mongodb://cameron:password@databaseNOUPOUE:27017" -p 3000:3000 -d backendnoupoue:1.0`
 * `docker run --name frontendNOUPOUE --network noupoue-network -p 8080:80 -d frontendnoupoue:1.0`
 
 * `docker ps` to see if everything is good
