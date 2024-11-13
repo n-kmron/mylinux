@@ -150,63 +150,40 @@ TO DO : Add a container handling authentication for this application using the o
 * `docker rm $(docker ps -aq)`
 * `nano /root/MultiContainerProject/MyFirstDockerComposeFile.yaml`
 
->version: "1.0"
->
->services:
->
->  databasenoupoue:
->
->    image: "databasenoupoue:1.0"
->
->    container_name: "databaseNOUPOUE" 
->
->    environment:
->
->      MONGO_INITDB_ROOT_USERNAME: cameron
->
->      MONGO_INITDB_ROOT_PASSWORD: password
->
->    networks:
->
->      - noupoue-network
->
->  backendnoupoue:
->
->    image: "backendnoupoue:1.0"
->
->    container_name: "backendNOUPOUE"
->
->    environment:
->
->      DB_USER: cameron
->
->      DB_PASS: password
->
->    networks:
->
->      - noupoue-network
->
->    ports:
->
->      - "3000:3000"
->
->  frontendnoupoue:
->
->    image: "frontendnoupoue:1.0"
->
->    container_name: "frontendNOUPOUE"
->
->    networks:
->
->      - noupoue-network
->
->    ports:
->
->      - "8080:80"
->
->networks:
->
->  noupoue-network:
+```yaml
+version: "1.0"
+
+services:
+  databasenoupoue:
+    image: "databasenoupoue:1.0"
+    container_name: "databaseNOUPOUE"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: cameron
+      MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - noupoue-network
+
+  backendnoupoue:
+    image: "backendnoupoue:1.0"
+    container_name: "backendNOUPOUE"
+    environment:
+      MONGO_URI: mongodb://cameron:password@databaseNOUPOUE:27017
+    networks:
+      - noupoue-network
+    ports:
+      - "3000:3000"
+
+  frontendnoupoue:
+    image: "frontendnoupoue:1.0"
+    container_name: "frontendNOUPOUE"
+    networks:
+      - noupoue-network
+    ports:
+      - "8080:80"
+
+networks:
+  noupoue-network:
+```
 
 * `docker compose -f MyFirstDockerComposeFile.yaml up -d` to launch our app
 * `tune2fs -l /dev/sda5`
