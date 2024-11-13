@@ -31,6 +31,6 @@
 
 * When I wanted to run this image I just built, it failed because in the Dockerfile, I also used capslock for my name
 
-* My MultiappContainer was launched but did not worked because the name of my containers did not match with the name into `index.html`, `nginx.conf` and `server.js` so I had to rebuild my images and containers
+* My MultiappContainer was launched but did not worked because the name of my containers did not match with the name into `index.html` and `nginx.conf` so I had to rebuild my images and containers
 
 * Even with the docker network, in the `index.html` when I used `backendNOUPOUE`, the websocket was not established (saw in navigator console) so I put the ip instead
