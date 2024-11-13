@@ -142,9 +142,33 @@ Let's start this application using docker run commands
 You now should be able to go on `http://\<our-ip\>:8080` and use our application
 
 NB: storage is managed by docker in subdirectories of /var/lib/docker/volumes
-TO DO : Add a container handling authentication for this application using the oauth2-proxy image.
 
-## 3. Introduction à Docker compose 
+### Add a container handling authentication for this application using the oauth2-proxy image.
+* `docker run -d --name oauth2proxyNOUPOUE --network noupoue-network -p 4180:4180 -e OAUTH2_PROXY_CLIENT_ID=<client-id> -e OAUTH2_PROXY_CLIENT_SECRET=<client-secret> -e OAUTH2_PROXY_COOKIE_SECRET=<cookie-secret> -e OAUTH2_PROXY_PROVIDER="google" -e OAUTH2_PROXY_REDIRECT_URL="http://frontendNOUPOUE:8080/oauth2/callback" -e OAUTH2_PROXY_EMAIL_DOMAINS="*" quay.io/oauth2-proxy/oauth2-proxy`
+
+We also need to edit the `nginx.conf` to redirect all request from the frontend to oauth2:
+```
+server {
+    listen 80;
+    
+    # Redirige toutes les requêtes vers oauth2-proxy
+    location / {
+        proxy_pass http://oauth2proxyNOUPOUE:4180;
+        
+        # Headers pour gérer la connexion client
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Gère les cookies de session créés par oauth2-proxy
+        proxy_cookie_path / "/; Secure; HttpOnly; SameSite=Lax";
+    }
+}
+```
+
+
+## 4. Introduction à Docker compose 
 
 * `docker stop $(docker ps -q)`
 * `docker rm $(docker ps -aq)`
