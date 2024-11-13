@@ -146,6 +146,8 @@ TO DO : Add a container handling authentication for this application using the o
 
 ## 3. Introduction à Docker compose 
 
+* `docker stop $(docker ps -q)`
+* `docker rm $(docker ps -aq)`
 * `nano /root/MultiContainerProject/MyFirstDockerComposeFile.yaml`
 
 >version: "1.0"
@@ -206,5 +208,5 @@ TO DO : Add a container handling authentication for this application using the o
 >
 >  noupoue-network:
 
-* `docker compose -f docker-compose.yaml up -d` to launch our app
+* `docker compose -f MyFirstDockerComposeFile.yaml up -d` to launch our app
 * `tune2fs -l /dev/sda5`
