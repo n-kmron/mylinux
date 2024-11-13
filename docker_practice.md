@@ -142,4 +142,69 @@ Let's start this application using docker run commands
 You now should be able to go on `http://\<our-ip\>:8080` and use our application
 
 NB: storage is managed by docker in subdirectories of /var/lib/docker/volumes
-Add a container handling authentication for this application using the oauth2-proxy image.
+TO DO : Add a container handling authentication for this application using the oauth2-proxy image.
+
+## 3. Introduction à Docker compose 
+
+* `nano /root/MultiContainerProject/MyFirstDockerComposeFile.yaml`
+
+>version: "1.0"
+>
+>services:
+>
+>  databasenoupoue:
+>
+>    image: "databasenoupoue:1.0"
+>
+>    container_name: "databaseNOUPOUE" 
+>
+>    environment:
+>
+>      MONGO_INITDB_ROOT_USERNAME: cameron
+>
+>      MONGO_INITDB_ROOT_PASSWORD: password
+>
+>    networks:
+>
+>      - noupoue-network
+>
+>  backendnoupoue:
+>
+>    image: "backendnoupoue:1.0"
+>
+>    container_name: "backendNOUPOUE"
+>
+>    environment:
+>
+>      DB_USER: cameron
+>
+>      DB_PASS: password
+>
+>    networks:
+>
+>      - noupoue-network
+>
+>    ports:
+>
+>      - "3000:3000"
+>
+>  frontendnoupoue:
+>
+>    image: "frontendnoupoue:1.0"
+>
+>    container_name: "frontendNOUPOUE"
+>
+>    networks:
+>
+>      - noupoue-network
+>
+>    ports:
+>
+>      - "8080:80"
+>
+>networks:
+>
+>  noupoue-network:
+
+* `docker compose -f docker-compose.yaml up -d` to launch our app
+* `tune2fs -l /dev/sda5`
