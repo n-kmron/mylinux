@@ -184,6 +184,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: cameron
       MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo_data:/data/db
     networks:
       - noupoue-network
 
@@ -204,6 +206,9 @@ services:
       - noupoue-network
     ports:
       - "8080:80"
+
+volumes:
+  mongo_data:
 
 networks:
   noupoue-network:
