@@ -54,4 +54,11 @@ Now, we'll configure the NFS server to have a remote storage for our cluster
 
 * `sudo chmod 644 /etc/exports`
 * `sudo exportfs -a`
-* `sudo systemctl restart nfs-kernel-server`
+* `sudo systemctl restart nfs-kernel-server` to restart the NFS server
+
+On the gentoo, we need to copy the data from the docker volume to the NFS server :
+* `docker inspect multicontainerwebapp_mongo_data` to get the path of the volume
+* `scp /var/lib/docker/volumes/multicontainerwebapp_mongo_data/_data/* admin@192.168.2.202:/mnt/mongo-noupoue`
+* `scp /var/lib/docker/volumes/multicontainerwebapp_mongo_data/_data/diagnostic.data/* admin@192.168.2.202:/mnt/mongo-noupoue`
+* `scp /var/lib/docker/volumes/multicontainerwebapp_mongo_data/_data/journal/* admin@192.168.2.202:/mnt/mongo-noupoue`
+  
