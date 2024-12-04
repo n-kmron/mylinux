@@ -65,6 +65,14 @@ On the gentoo, we need to copy the data from the docker volume to the NFS server
 * `scp /var/lib/docker/volumes/multicontainerwebapp_mongo_data/_data/diagnostic.data/* admin@192.168.2.202:/mnt/mongo-noupoue`
 * `scp /var/lib/docker/volumes/multicontainerwebapp_mongo_data/_data/journal/* admin@192.168.2.202:/mnt/mongo-noupoue`
 
+Go back to the master node :
+
+* `cd /home/user`
+* `nano nfs-pv.yaml` and paste the code you can find [here](https://github.com/kubernetes/examples/blob/master/staging/volumes/nfs/nfs-pv.yaml)
+We just need to change the `nfs-server` and replace by our NFS server `192.168.2.202` and `path` with `/mnt/mongo-noupoue`
+
+* `kubectl get pv` to verify we have been create our NFS
+
 Return back to the NFS server (192.168.2.202)
 
 * `sudo docker run -d -p 5000:5000 --restart=always --name registry registry:2`
