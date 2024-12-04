@@ -212,6 +212,9 @@ volumes:
 
 networks:
   noupoue-network:
+    driver: bridge
+    name: noupoue-network
+    external: true
 ```
 
 * `docker compose -f MyFirstDockerComposeFile.yaml up -d` to launch our app
