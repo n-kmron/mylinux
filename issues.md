@@ -34,3 +34,5 @@
 * My MultiappContainer was launched but did not worked because the name of my containers did not match with the name into `index.html` and `nginx.conf` so I had to rebuild my images and containers
 
 * Even with the docker network, in the `index.html` when I used `backendNOUPOUE`, the websocket was not established (saw in navigator console) so I put the ip instead
+
+* On the step 6, I was not able to pull up the docker image (for mongo:4.4) because my Gentoo was not on the right date and time so the certificate verification failed -> `date 241204 10:43:05`
