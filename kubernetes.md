@@ -101,7 +101,7 @@ We are now able to push our images to the local registry
 
 Now, we need to make the registry accessible from each nodes (.210, .211, .212) 
 
-* `nano /etc/containerd/config.toml`
+* `sudo nano /etc/containerd/config.toml`
 
 And add this at the end :
 
