@@ -143,31 +143,6 @@ You now should be able to go on `http://\<our-ip\>:8080` and use our application
 
 NB: storage is managed by docker in subdirectories of /var/lib/docker/volumes
 
-### Add a container handling authentication for this application using the oauth2-proxy image.
-* `docker run -d --name oauth2proxyNOUPOUE --network noupoue-network -p 4180:4180 -e OAUTH2_PROXY_CLIENT_ID=<client-id> -e OAUTH2_PROXY_CLIENT_SECRET=<client-secret> -e OAUTH2_PROXY_COOKIE_SECRET=<cookie-secret> -e OAUTH2_PROXY_PROVIDER="google" -e OAUTH2_PROXY_REDIRECT_URL="http://frontendNOUPOUE:8080/oauth2/callback" -e OAUTH2_PROXY_EMAIL_DOMAINS="*" quay.io/oauth2-proxy/oauth2-proxy`
-
-We also need to edit the `nginx.conf` to redirect all request from the frontend to oauth2:
-```
-server {
-    listen 80;
-    
-    # Redirige toutes les requêtes vers oauth2-proxy
-    location / {
-        proxy_pass http://oauth2proxyNOUPOUE:4180;
-        
-        # Headers pour gérer la connexion client
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        # Gère les cookies de session créés par oauth2-proxy
-        proxy_cookie_path / "/; Secure; HttpOnly; SameSite=Lax";
-    }
-}
-```
-
-
 ## 4. Introduction à Docker compose 
 
 * `docker stop $(docker ps -q)`
@@ -223,3 +198,48 @@ networks:
 WARNING: to do it, we must remove the `container_name` in the yaml file and the `port 3000` too. We also need to remove in the `index.html` the :3000 port in the `const ws`.
 
 * `tune2fs -l /dev/sda5`
+
+
+### Add a container handling authentication for this application using the oauth2-proxy image.
+
+* `emerge app-admin/apache-tools` to have apache to host oauth2 and get the `/usr/bin/htpasswd` file (serve to do our local auth)
+* `mkdir -p oauth2NOUPOUE`
+* `htpasswd -nbB cameron NOUPOUE2024 > ./oauth2NOUPOUE/.htpasswd` to generate our credentials
+
+We also need to edit the `MyFirstDockerComposeFile.yaml` to add a service for oauth2:
+
+```yaml
+oauth2noupoue:
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    container_name: oauth2NOUPOUE
+    ports:
+     - "80:4180"
+    environment:
+      - OAUTH2_PROXY_HTTP_ADDRESS=0.0.0.0:4180
+      - OAUTH2_PROXY_PROVIDER=gitlab
+      - OAUTH2_PROXY_OIDC_ISSUER_URL=http://dummy.com/
+      - OAUTH2_PROXY_OIDC_JWKS_URL=http://dummy.com/
+      - OAUTH2_PROXY_CLIENT_ID=client_id
+      - OAUTH2_PROXY_CLIENT_SECRET=client_secret
+      - OAUTH2_PROXY_UPSTREAMS=http://frontendNOUOUE:80/
+      - OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY=true
+      - OAUTH2_PROXY_COOKIE_SECRET=12345678901234567890123456789000
+      - OAUTH2_PROXY_COOKIE_SECURE=false
+      - OAUTH2_PROXY_COOKIE_PATH=/
+      - OAUTH2_PROXY_COOKIE_DOMAINS=".localhost.com"
+      - OAUTH2_PROXY_HTPASSWD_FILE=/etc/oauth2-proxy/.htpasswd
+      - OAUTH2_PROXY_SKIP_OIDC_DISCOVERY=true
+    volumes:
+      - ./oauth2NOUPOUE/.htpasswd:/etc/oauth2-proxy/.htpasswd:ro
+    networks:
+      - noupoue-network
+```
+
+Now, we need to delete our images and recompose 
+* `docker compose -f MyFirstDockerComposeFile.yaml down`
+* `docker images` to get id of images to delete
+* `docker rmi <img_id>` to delete our images
+* `docker build -t <imagenoupoue>:1.0 ./<pathNOUPOUE>` to rebuild our images (only frontend, backend and database because oauth will be pull)
+* `docker compose -f MyFirstDockerComposeFile.yaml up -d`
+
+Everything is good ! You can go on <our-ip> to see the result (you can get <our-ip> by doing `ip addr show enp2s1`)
