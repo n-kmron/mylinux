@@ -242,4 +242,4 @@ Now, we need to delete our images and recompose
 * `docker build -t <imagenoupoue>:1.0 ./<pathNOUPOUE>` to rebuild our images (only frontend, backend and database because oauth will be pull)
 * `docker compose -f MyFirstDockerComposeFile.yaml up -d`
 
-Everything is good ! You can go on <our-ip> to see the result (you can get <our-ip> by doing `ip addr show enp2s1`)
+Everything is good ! You can go on `<our-ip>` to see the result (you can get <our-ip> by doing `ip addr show enp2s1`)
