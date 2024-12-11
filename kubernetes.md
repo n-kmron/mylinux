@@ -31,7 +31,7 @@ Now, we need to connect to the master node to register worker nodes in the clust
 
 * `ssh -v user@192.168.2.210` (P@ssw0rd)
 * `kubectl get pods --all-namespaces` to verify if the master node is ready to get some worker nodes. We should see all serivces in a RUNNING status
-* `kubeadm token create - -print-join-command` to get a command to inject in our nodes to make them join the master node (keep this command)
+* `kubeadm token create --print-join-command` to get a command to inject in our nodes to make them join the master node (keep this command)
 
 Connect with ssh to the master nodes (.211 et .212) and paste the command you got with a `sudo` prefix
 
@@ -82,7 +82,8 @@ Return back to the Gentoo with Docker and let's export our images
 * `docker save -o frontend.tar frontendnoupoue` 
 * `docker save -o backend.tar backendnoupoue` 
 * `docker save -o database.tar databasenoupoue`
-* `scp frontend.tar backend.tar database.tar admin@192.168.2.202:/mnt/mongo-noupoue`
+* `docker save -o oauth.tar quay.io/oauth2-proxy/oauth2-proxy`
+* `scp frontend.tar backend.tar database.tar oauth.tar admin@192.168.2.202:/mnt/mongo-noupoue`
 
 Now, we can delete the `.tar` files
 
@@ -91,6 +92,7 @@ Go back to the NFS server (192.168.2.202)
 * `sudo docker load -i /mnt/mongo-noupoue/frontend.tar`
 * `sudo docker load -i /mnt/mongo-noupoue/backend.tar`
 * `sudo docker load -i /mnt/mongo-noupoue/database.tar`
+* `sudo docker load -i /mnt/mongo-noupoue/oauth.tar`
 
 We'll add tag before pushing our images to the local registry 
 
@@ -100,12 +102,15 @@ We'll add tag before pushing our images to the local registry
 * `rm backend.tar`
 * `sudo docker tag databasenoupoue localhost:5000/databasenoupoue`
 * `rm database.tar`
+* `sudo docker tag quay.io/oauth2-proxy/oauth2-proxy localhost:5000/oauth2noupoue`
+* `rm oauth.tar`
 
 We are now able to push our images to the local registry 
 
 * `sudo docker push localhost:5000/frontendnoupoue`
 * `sudo docker push localhost:5000/backendnoupoue`
 * `sudo docker push localhost:5000/databasenoupoue`
+* `sudo docker push localhost:5000/oauth2noupoue`
 
 Now, we need to make the registry accessible from each nodes (.210, .211, .212) 
 
