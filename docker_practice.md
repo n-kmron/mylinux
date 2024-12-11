@@ -206,6 +206,35 @@ WARNING: to do it, we must remove the `container_name` in the yaml file and the 
 * `mkdir -p oauth2NOUPOUE`
 * `htpasswd -nbB cameron NOUPOUE2024 > ./oauth2NOUPOUE/.htpasswd` to generate our credentials
 
+Now, we can do the `Dockerfile` in `/oauth2NOUPOUE`
+
+```Dockerfile
+FROM quay.io/oauth2-proxy/oauth2-proxy:latest
+
+EXPOSE 4180
+
+COPY ./.htpasswd /etc/oauth2-proxy/.htpasswd
+
+ENV OAUTH2_PROXY_HTTP_ADDRESS="0.0.0.0:4180"
+ENV OAUTH2_PROXY_PROVIDER="gitlab"
+ENV OAUTH2_PROXY_OIDC_ISSUER_URL="http://dummy.com/"
+ENV OAUTH2_PROXY_OIDC_JWKS_URL="http://dummy.com/"
+ENV OAUTH2_PROXY_CLIENT_ID="client_id"
+ENV OAUTH2_PROXY_CLIENT_SECRET="client_secret"
+ENV OAUTH2_PROXY_UPSTREAMS="http://frontendnoupoue:80/"
+ENV OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY="true"
+ENV OAUTH2_PROXY_COOKIE_SECRET="12345678901234567890123456789000"
+ENV OAUTH2_PROXY_COOKIE_SECURE="false"
+ENV OAUTH2_PROXY_COOKIE_PATH="/"
+ENV OAUTH2_PROXY_COOKIE_DOMAINS=".localhost.com"
+ENV OAUTH2_PROXY_HTPASSWD_FILE="/etc/oauth2-proxy/.htpasswd"
+ENV OAUTH2_PROXY_SKIP_OIDC_DISCOVERY="true"
+
+CMD ["/bin/oauth2-proxy"]
+```
+
+* `docker build -t oauth2noupoue:1.0`
+
 We also need to edit the `MyFirstDockerComposeFile.yaml` to add a service for oauth2:
 
 ```yaml

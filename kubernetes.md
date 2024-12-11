@@ -98,6 +98,8 @@ WARNING: we also need to edit the `index.html` and `nginx.conf` in the frontend 
 
 * `nano ./frontendNOUPOUE/nginx.conf` -> change `backendNOUPOUE` in `backendnoupoue-service`
 
+* `nano ./oauth2NOUPOUE/Dockerfile` -> change http://frontendnoupoue:80` in `frontendnoupoue-service:80`
+
 We can build a new image to not affect our actual config for Gentoo 
 
 * `docker build -t frontendk8noupoue:1.0 ./frontendNOUPOUE`
@@ -180,27 +182,142 @@ Let's create the `.yaml` deployment for the frontend
 * `vim frontend-deployment.yaml`
 
 ```yaml
-containers:
-- name: frontend
-  image: 192.168.2.202:5000/frontendnoupoue:latest
-- name: backend
-  image: 192.168.2.202:5000/backendnoupoue:latest
-- name: oauth2
-  image: 192.168.2.202:5000/oauth2noupoue:latest
-- name: database
-  image: 192.168.2.202:5000/databasenoupoue:latest
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontendnoupoue
+  labels:
+    app: frontendnoupoue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontendnoupoue
+  template:
+    metadata:
+      labels:
+        app: frontendnoupoue
+    spec:
+      containers:
+      - name: frontendnoupoue
+        image: 192.168.2.202:5000/frontendnoupoue
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontendnoupoue-service
+spec:
+  selector:
+    app: frontendnoupoue
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
 ```
 
 Let's create the `.yaml` deployment for the backend
 
 * `vim backend-deployment.yaml`
 ```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backendnoupoue
+  labels:
+    app: backendnoupoue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backendnoupoue
+  template:
+    metadata:
+      labels:
+        app: backendnoupoue
+    spec:
+      containers:
+        - name: backendnoupoue
+          image: 192.168.2.202:5000/backendnoupoue
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MONGO_URI
+              value: mongodb://cameron:$(MONGO_DB_PASSWORD)@databasenoupoue-service:27017/
+            - name: MONGO_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secretpassword
+                  key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backendnoupoue-service
+spec:
+  selector:
+    app: backendnoupoue
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30000
+  type: NodePort
 ```
 
 Let's create the `.yaml` deployment for the database
 
 * `vim mongo-deployment.yaml`
 ```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongonoupoue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongonoupoue
+  template:
+    metadata:
+      labels:
+        app: mongonoupoue
+    spec:
+      containers:
+        - name: mongonoupoue
+          image: 192.168.2.202:5000/databasenoupoue
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "cameron"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: $(MONGO_DB_PASSWORD)
+            - name: MONGO_URI
+              value: mongodb://cameron:$(MONGO_DB_PASSWORD)@databasenoupoue-service:27017/
+            - name: MONGO_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secretpassword
+                  key: password
+          volumeMounts:
+            - name: mongonoupoue-storage
+              mountPath: /data/db
+      volumes:
+        - name: mongonoupoue-storage
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: databasenoupoue-service
+spec:
+  ports:
+    - port: 27017
+  selector:
+    app: mongonoupoue
 ```
 
 Let's create the `.yaml` deployment for the PVC (the PVC is the PV claim, it ask the PV to consume the data in the peristent volume). Be careful, the data's quantity must be lower or equal to the PV
@@ -213,7 +330,7 @@ metadata:
   name: mongo-pvc
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 10Mi
@@ -224,6 +341,8 @@ Let's create the `.yaml` deloyment for the oauth
 * `vim oauth-deployment.yaml`
 ```yaml
 ```
+
+Then, we need to download apache-utils and configure our `.htpasswd` for our credentials 
 
 Now we need to apply the `.yaml` deployments
 
