@@ -69,10 +69,12 @@ Go back to the master node :
 
 * `cd /home/user`
 * `nano nfs-pv.yaml` and paste the code you can find [here](https://github.com/kubernetes/examples/blob/master/staging/volumes/nfs/nfs-pv.yaml)
-We just need to change the `nfs-server` and replace by our NFS server `192.168.2.202`, storage with `1Mi` and `path` with `/mnt/mongo-noupoue`
+We just need to change the `nfs-server` and replace by our NFS server `192.168.2.202`, storage with `10Mi` and `path` with `/mnt/mongo-noupoue`
 
 * `kubectl apply -f nfs-pv.yaml`
 * `kubectl get pv` to verify we have been create our NFS
+
+The PV (persistent volume) is a storage resource independent of the pod lifecycle to survive the deletion or re-registration of pods. It also centralise the management for the admin
 
 Return back to the NFS server (192.168.2.202)
 
@@ -90,12 +92,22 @@ WARNING: to get the 4.4 version for mongodb, you need to rebuild your image and 
 
 * `docker build -t databasenoupoue:1.0 ./databaseNOUPOUE`
 
+WARNING: we also need to edit the `index.html` and `nginx.conf` in the frontend to regulate the k8s format (backendNOUPOUE is not good, we need lowercase)
+
+* `nano ./frontendNOUPOUE/index.html` -> change the static ip (ws://172.16...) in `backendnoupoue-service`
+
+* `nano ./frontendNOUPOUE/nginx.conf` -> change `backendNOUPOUE` in `backendnoupoue-service`
+
+We can build a new image to not affect our actual config for Gentoo 
+
+* `docker build -t frontendk8noupoue:1.0 ./frontendNOUPOUE`
+
 Now, we can export our images
 
-* `sudo docker save -o frontend.tar frontendnoupoue` 
-* `sudo docker save -o backend.tar backendnoupoue` 
-* `sudo docker save -o database.tar databasenoupoue`
-* `sudo docker save -o oauth.tar quay.io/oauth2-proxy/oauth2-proxy`
+* `docker save -o frontend.tar frontendk8noupoue` 
+* `docker save -o backend.tar backendnoupoue` 
+* `docker save -o database.tar databasenoupoue`
+* `docker save -o oauth.tar quay.io/oauth2-proxy/oauth2-proxy`
 * `scp frontend.tar backend.tar database.tar oauth.tar admin@192.168.2.202:/mnt/mongo-noupoue`
 
 Now, we can delete the `.tar` files
@@ -121,7 +133,7 @@ Go back to the NFS server (192.168.2.202)
 
 We'll add tag before pushing our images to the local registry 
 
-* `sudo docker tag frontendnoupoue:1.0 localhost:5000/frontendnoupoue`
+* `sudo docker tag frontendk8noupoue:1.0 localhost:5000/frontendnoupoue`
 * `rm frontend.tar`
 * `sudo docker tag backendnoupoue:1.0 localhost:5000/backendnoupoue`
 * `rm backend.tar`
@@ -163,6 +175,10 @@ We need now to do a secret to encrypt the password with k8s
 
 * `kubectl create secret generic secretpassword --from-literal=password=password`
 
+Let's create the `.yaml` deployment for the frontend
+
+* `vim frontend-deployment.yaml`
+
 ```yaml
 containers:
 - name: frontend
@@ -174,3 +190,59 @@ containers:
 - name: database
   image: 192.168.2.202:5000/databasenoupoue:latest
 ```
+
+Let's create the `.yaml` deployment for the backend
+
+* `vim backend-deployment.yaml`
+```yaml
+```
+
+Let's create the `.yaml` deployment for the database
+
+* `vim mongo-deployment.yaml`
+```yaml
+```
+
+Let's create the `.yaml` deployment for the PVC (the PVC is the PV claim, it ask the PV to consume the data in the peristent volume). Be careful, the data's quantity must be lower or equal to the PV
+
+* `vim nfs-pvc.yaml`
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+```
+
+Let's create the `.yaml` deloyment for the oauth
+
+* `vim oauth-deployment.yaml`
+```yaml
+```
+
+Now we need to apply the `.yaml` deployments
+
+* `kubectl apply -f frontend-deployment.yaml`
+* `kubectl apply -f backend-deployment.yaml`
+* `kubectl apply -f mongo-deployment.yaml'
+* `kubectl apply -f oauth-deployment.yaml`
+* `kubectl apply -f nfs-pvc.yaml'
+
+If you have issues and you need to update your `.yaml` deployment
+
+* `kubectl delete -f <your-yaml.yaml>`
+
+Because, if you delete only the pod, the master node will automaticly restart another pod because it is in the deployment
+
+* `kubectl get pods` to see the results
+* `kubectl logs <pod-name>` to see the logs
+* `kubectl describe pvc mongo-pvc` to see if the PVC works (the status should be 'BOUND')
+* `kubectl get services` to see the services
+Everything should be as <RUNNING>
+
+To access our app, we need to go to the master node IP : 192.168.2.210:<port>. We have the port by doing `kubectl get pods`
