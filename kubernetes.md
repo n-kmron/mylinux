@@ -103,13 +103,14 @@ WARNING: we also need to edit the `index.html` and `nginx.conf` in the frontend 
 We can build a new image to not affect our actual config for Gentoo 
 
 * `docker build -t frontendk8noupoue:1.0 ./frontendNOUPOUE`
+* `docker build -t oauth2noupoue:1.0 ./oauth2NOUPOUE`
 
 Now, we can export our images
 
 * `docker save -o frontend.tar frontendk8noupoue` 
 * `docker save -o backend.tar backendnoupoue` 
 * `docker save -o database.tar databasenoupoue`
-* `docker save -o oauth.tar quay.io/oauth2-proxy/oauth2-proxy`
+* `docker save -o oauth.tar oauth2noupoue`
 * `scp frontend.tar backend.tar database.tar oauth.tar admin@192.168.2.202:/mnt/mongo-noupoue`
 
 Now, we can delete the `.tar` files
@@ -341,8 +342,6 @@ Let's create the `.yaml` deloyment for the oauth
 * `vim oauth-deployment.yaml`
 ```yaml
 ```
-
-Then, we need to download apache-utils and configure our `.htpasswd` for our credentials 
 
 Now we need to apply the `.yaml` deployments
 
