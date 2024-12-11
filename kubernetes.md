@@ -52,7 +52,7 @@ Now, we'll configure the NFS server to have a remote storage for our cluster
 * `sudo chmod 777 /etc/exports` (P@ssw0rd)
 * `nano /etc/exports`
 
-> /mnt/noupoue 192.168.2.0/24(rw,sync,no_subtree_check,no_root_squash)
+> /mnt/mongo-noupoue 192.168.2.0/24(rw,sync,no_subtree_check,no_root_squash)
 
 * `sudo chmod 644 /etc/exports`
 * `sudo exportfs -a`
@@ -69,8 +69,9 @@ Go back to the master node :
 
 * `cd /home/user`
 * `nano nfs-pv.yaml` and paste the code you can find [here](https://github.com/kubernetes/examples/blob/master/staging/volumes/nfs/nfs-pv.yaml)
-We just need to change the `nfs-server` and replace by our NFS server `192.168.2.202` and `path` with `/mnt/mongo-noupoue`
+We just need to change the `nfs-server` and replace by our NFS server `192.168.2.202`, storage with `1Mi` and `path` with `/mnt/mongo-noupoue`
 
+* `kubectl apply -f nfs-pv.yaml`
 * `kubectl get pv` to verify we have been create our NFS
 
 Return back to the NFS server (192.168.2.202)
@@ -79,13 +80,37 @@ Return back to the NFS server (192.168.2.202)
 
 Return back to the Gentoo with Docker and let's export our images
 
-* `docker save -o frontend.tar frontendnoupoue` 
-* `docker save -o backend.tar backendnoupoue` 
-* `docker save -o database.tar databasenoupoue`
-* `docker save -o oauth.tar quay.io/oauth2-proxy/oauth2-proxy`
+WARNING: to get the 4.4 version for mongodb, you need to rebuild your image and Gentoo after modify the `Dockerfile`
+
+> FROM mongo:4.4
+>
+> LABEL maintainer="Cameron Noupoue"
+>
+> EXPOSE 27017
+
+* `docker build -t databasenoupoue:1.0 ./databaseNOUPOUE`
+
+Now, we can export our images
+
+* `sudo docker save -o frontend.tar frontendnoupoue` 
+* `sudo docker save -o backend.tar backendnoupoue` 
+* `sudo docker save -o database.tar databasenoupoue`
+* `sudo docker save -o oauth.tar quay.io/oauth2-proxy/oauth2-proxy`
 * `scp frontend.tar backend.tar database.tar oauth.tar admin@192.168.2.202:/mnt/mongo-noupoue`
 
 Now, we can delete the `.tar` files
+
+Do not forget to rebuild our mongo image with the previous parameters in the `Dockerfile`
+
+>FROM mongo
+>
+>LABEL maintainer="Cameron Noupoue"
+>
+>RUN apt-get update && apt-get install -y iproute2 iputils-ping
+>
+>EXPOSE 27017
+
+* `docker build -t databasenoupoue:1.0 ./databaseNOUPOUE`
 
 Go back to the NFS server (192.168.2.202)
 
@@ -96,11 +121,11 @@ Go back to the NFS server (192.168.2.202)
 
 We'll add tag before pushing our images to the local registry 
 
-* `sudo docker tag frontendnoupoue localhost:5000/frontendnoupoue`
+* `sudo docker tag frontendnoupoue:1.0 localhost:5000/frontendnoupoue`
 * `rm frontend.tar`
-* `sudo docker tag backendnoupoue localhost:5000/backendnoupoue`
+* `sudo docker tag backendnoupoue:1.0 localhost:5000/backendnoupoue`
 * `rm backend.tar`
-* `sudo docker tag databasenoupoue localhost:5000/databasenoupoue`
+* `sudo docker tag databasenoupoue:1.0 localhost:5000/databasenoupoue`
 * `rm database.tar`
 * `sudo docker tag quay.io/oauth2-proxy/oauth2-proxy localhost:5000/oauth2noupoue`
 * `rm oauth.tar`
@@ -126,3 +151,26 @@ And add this at the end :
 ```
 
 * `sudo systemctl restart containerd`
+
+Now, we will write a `.yaml` file to specify our deployment process (to access our images in the private registry)
+
+On the master node : 
+
+* `ssh -v user@192.168.2.210`
+* `cd /home/user`
+
+We need now to do a secret to encrypt the password with k8s
+
+* `kubectl create secret generic secretpassword --from-literal=password=password`
+
+```yaml
+containers:
+- name: frontend
+  image: 192.168.2.202:5000/frontendnoupoue:latest
+- name: backend
+  image: 192.168.2.202:5000/backendnoupoue:latest
+- name: oauth2
+  image: 192.168.2.202:5000/oauth2noupoue:latest
+- name: database
+  image: 192.168.2.202:5000/databasenoupoue:latest
+```
