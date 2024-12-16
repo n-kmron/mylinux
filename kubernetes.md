@@ -90,20 +90,15 @@ WARNING: to get the 4.4 version for mongodb, you need to rebuild your image and 
 >
 > EXPOSE 27017
 
-* `docker build -t databasenoupoue:1.0 ./databaseNOUPOUE`
+* `docker build -t databasenoupoue:k8 ./databaseNOUPOUE`
 
-WARNING: we also need to edit the `index.html` and `nginx.conf` in the frontend to regulate the k8s format (backendNOUPOUE is not good, we need lowercase)
-
-* `nano ./frontendNOUPOUE/index.html` -> change the static ip (ws://172.16...) in `backendnoupoue-service`
+WARNING: we also need to edit the `nginx.conf` in the frontend to regulate the k8s format (backendNOUPOUE is not good, we need lowercase)
 
 * `nano ./frontendNOUPOUE/nginx.conf` -> change `backendNOUPOUE` in `backendnoupoue-service`
 
-* `nano ./oauth2NOUPOUE/Dockerfile` -> change http://frontendnoupoue:80` in `frontendnoupoue-service:80`
-
 We can build a new image to not affect our actual config for Gentoo 
 
-* `docker build -t frontendk8noupoue:1.0 ./frontendNOUPOUE`
-* `docker build -t oauth2noupoue:1.0 ./oauth2NOUPOUE`
+* `docker build -t frontendnoupoue:k8 ./frontendNOUPOUE`
 
 Now, we can export our images
 
@@ -114,18 +109,6 @@ Now, we can export our images
 * `scp frontend.tar backend.tar database.tar oauth.tar admin@192.168.2.202:/mnt/mongo-noupoue`
 
 Now, we can delete the `.tar` files
-
-Do not forget to rebuild our mongo image with the previous parameters in the `Dockerfile`
-
->FROM mongo
->
->LABEL maintainer="Cameron Noupoue"
->
->RUN apt-get update && apt-get install -y iproute2 iputils-ping
->
->EXPOSE 27017
-
-* `docker build -t databasenoupoue:1.0 ./databaseNOUPOUE`
 
 Go back to the NFS server (192.168.2.202)
 
@@ -216,12 +199,13 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-  type: NodePort
+  type: ClusterIP
 ```
 
 Let's create the `.yaml` deployment for the backend
 
 * `vim backend-deployment.yaml`
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -245,13 +229,13 @@ spec:
           ports:
             - containerPort: 3000
           env:
-            - name: MONGO_URI
-              value: mongodb://cameron:$(MONGO_DB_PASSWORD)@databasenoupoue-service:27017/
             - name: MONGO_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: secretpassword
                   key: password
+            - name: MONGO_URI
+              value: mongodb://cameron:$(MONGO_DB_PASSWORD)@databasenoupoue-service:27017/
 ---
 apiVersion: v1
 kind: Service
@@ -264,13 +248,13 @@ spec:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-      nodePort: 30000
-  type: NodePort
+  type: ClusterIP
 ```
 
 Let's create the `.yaml` deployment for the database
 
 * `vim mongo-deployment.yaml`
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -295,20 +279,22 @@ spec:
             - name: MONGO_INITDB_ROOT_USERNAME
               value: "cameron"
             - name: MONGO_INITDB_ROOT_PASSWORD
-              value: $(MONGO_DB_PASSWORD)
-            - name: MONGO_URI
-              value: mongodb://cameron:$(MONGO_DB_PASSWORD)@databasenoupoue-service:27017/
-            - name: MONGO_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: secretpassword
                   key: password
+            - name: MONGO_URI
+              value: mongodb://cameron:$(MONGO_INITDB_ROOT_PASSWORD)@databasenoupoue-service:27017/
+            - name: MONGO_INITDB_DATABASE
+              value: chat
           volumeMounts:
             - name: mongonoupoue-storage
               mountPath: /data/db
       volumes:
         - name: mongonoupoue-storage
-          emptyDir: {}
+          nfs:
+            server: 192.168.2.202
+            path: /mnt/mongo-noupoue
 ---
 apiVersion: v1
 kind: Service
@@ -340,7 +326,69 @@ spec:
 Let's create the `.yaml` deloyment for the oauth
 
 * `vim oauth-deployment.yaml`
+
 ```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2noupoue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth2noupoue
+  template:
+    metadata:
+      labels:
+        app: oauth2noupoue
+    spec:
+      containers:
+        - name: oauth2noupoue
+          image: 192.168.2.202:5000/oauth2noupoue
+          ports:
+            - containerPort: 4180
+          env:
+            - name: OAUTH2_PROXY_HTTP_ADDRESS
+              value: "0.0.0.0:4180"
+            - name: OAUTH2_PROXY_PROVIDER
+              value: "gitlab"
+            - name: OAUTH2_PROXY_OIDC_ISSUER_URL
+              value: "http://dummy.com/"
+            - name: OAUTH2_PROXY_OIDC_JWKS_URL
+              value: "http://dummy.com/"
+            - name: OAUTH2_PROXY_CLIENT_ID
+              value: "client_id"
+            - name: OAUTH2_PROXY_CLIENT_SECRET
+              value: "client_secret"
+            - name: OAUTH2_PROXY_REDIRECT_URL
+              value: "http://192.168.2.210:4180/oauth2/callback"
+            - name: OAUTH2_PROXY_UPSTREAMS
+              value: "http://frontendnoupoue-service/"
+            - name: OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY
+              value: "true"
+            - name: OAUTH2_PROXY_COOKIE_SECRET
+              value: "12345678901234567890123456789000"
+            - name: OAUTH2_PROXY_COOKIE_SECURE
+              value: "false"
+            - name: OAUTH2_PROXY_COOKIE_PATH
+              value: "/"
+            - name: OAUTH2_PROXY_HTPASSWD_FILE
+              value: "/etc/oauth2-proxy/.htpasswd"
+            - name: OAUTH2_PROXY_SKIP_OIDC_DISCOVERY
+              value: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth2noupoue-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 4180
+      nodePort: 30000
+  selector:
+    app: oauth2noupoue
+  type: NodePort
 ```
 
 Now we need to apply the `.yaml` deployments
@@ -364,3 +412,16 @@ Because, if you delete only the pod, the master node will automaticly restart an
 Everything should be as <RUNNING>
 
 To access our app, we need to go to the master node IP : 192.168.2.210:<port>. We have the port by doing `kubectl get pods`
+
+If you have storage issues regarding mongo, you should delete files in `/mnt/mongo-noupoue` in the `192.168.2.202` VM
+
+I added a script to undeploy each script and another to deploy everything, when we do major changes (like add the secretkey password, ...) it does not work if we don't undeploy then deploy everything.
+
+
+
+* `chmod +x undeploy.sh`
+* `chmod +x deploy.sh`
+
+Last tip : if it still does not work because of `websocket:30000 unavailable` we need to remove the node port in the `oauth2noupoue-service`. So, when we'll launch the app, we will need to check `kubectl get svc` external port for oauth2
+
+Each service has only the internal port that is open to only allow clusters to access them. Apart from the service `oauth` who's accessible from an external port (30000) because it's the entry point of our app.
