@@ -417,6 +417,76 @@ If you have storage issues regarding mongo, you should delete files in `/mnt/mon
 
 I added a script to undeploy each script and another to deploy everything, when we do major changes (like add the secretkey password, ...) it does not work if we don't undeploy then deploy everything.
 
+Here's the deploy script :
+
+```bash
+#!/bin/bash
+
+echo "Application du NFS Persistent Volume (nfs-pv.yaml)..."
+kubectl apply -f nfs-pv.yaml
+
+echo "Application du NFS Persistent Volume Claim (nfs-pvc.yaml)..."
+kubectl apply -f nfs-pvc.yaml
+
+echo "Application du déploiement Mongo (mongo-deployment.yaml)..."
+kubectl apply -f mongo-deployment.yaml
+
+echo "Application du déploiement Backend (backend-deployment.yaml)..."
+kubectl apply -f backend-deployment.yaml
+
+echo "Application du déploiement Frontend (frontend-deployment.yaml)..."
+kubectl apply -f frontend-deployment.yaml
+
+echo "Application du déploiement OAuth (oauth-deployment.yaml)..."
+kubectl apply -f oauth-deployment.yaml
+
+OAUTH_PORT=$(kubectl get svc oauth2noupoue-service -o jsonpath='{.spec.ports[0].nodePort}')
+
+# Si le port est trouvé, ouvrir le navigateur
+if [ -z "$OAUTH_PORT" ]; then
+  echo "Erreur : impossible de trouver le port externe pour le service OAuth."
+else
+  echo "Le service OAuth est accessible sur le port $OAUTH_PORT."
+  echo "Lancement du navigateur à l'adresse http://192.168.2.210:$OAUTH_PORT"
+  
+  # Ouvrir le navigateur
+  if command -v xdg-open &> /dev/null; then
+    xdg-open "http://192.168.2.210:$OAUTH_PORT"
+  elif command -v open &> /dev/null; then
+    open "http://192.168.2.210:$OAUTH_PORT"
+  else
+    echo "Aucun navigateur détecté. Veuillez ouvrir manuellement l'URL : http://192.168.2.210:$OAUTH_PORT"
+  fi
+fi
+```
+
+And here's the undeploy script 
+
+```bash
+#!/bin/bash
+
+echo "Suppression des déploiements OAuth..."
+kubectl delete -f oauth-deployment.yaml
+
+echo "Suppression des déploiements Mongo..."
+kubectl delete -f mongo-deployment.yaml
+
+echo "Suppression des déploiements Frontend..."
+kubectl delete -f frontend-deployment.yaml
+
+echo "Suppression des déploiements Backend..."
+kubectl delete -f backend-deployment.yaml
+
+echo "Suppression des pods restants..."
+kubectl delete pods --all
+
+echo "Récupération de l'état des pods..."
+kubectl get pods
+
+echo "Suppression des volumes..."
+kubectl delete -f nfs-pv.yaml
+kubectl delete -f nfs-pvc.yaml
+```
 
 
 * `chmod +x undeploy.sh`
