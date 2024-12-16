@@ -66,7 +66,11 @@ In the `index.html` file, we need to edit the following line :
 > const ws = new WebSocket(´ws://backend:3000/ws’);
 
 To replace by : 
-> const ws = new WebSocket(´ws://\<our-ip\>:3000/ws’);
+> const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+> 
+> const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
+> 
+> const ws = new WebSocket(wsUrl);
 
 
 In the `nginx.conf` file, we need to edit the following line : 
@@ -244,22 +248,7 @@ oauth2noupoue:
     ports:
      - "80:4180"
     environment:
-      - OAUTH2_PROXY_HTTP_ADDRESS=0.0.0.0:4180
-      - OAUTH2_PROXY_PROVIDER=gitlab
-      - OAUTH2_PROXY_OIDC_ISSUER_URL=http://dummy.com/
-      - OAUTH2_PROXY_OIDC_JWKS_URL=http://dummy.com/
-      - OAUTH2_PROXY_CLIENT_ID=client_id
-      - OAUTH2_PROXY_CLIENT_SECRET=client_secret
       - OAUTH2_PROXY_UPSTREAMS=http://frontendnoupoue:80/
-      - OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY=true
-      - OAUTH2_PROXY_COOKIE_SECRET=12345678901234567890123456789000
-      - OAUTH2_PROXY_COOKIE_SECURE=false
-      - OAUTH2_PROXY_COOKIE_PATH=/
-      - OAUTH2_PROXY_COOKIE_DOMAINS=".localhost.com"
-      - OAUTH2_PROXY_HTPASSWD_FILE=/etc/oauth2-proxy/.htpasswd
-      - OAUTH2_PROXY_SKIP_OIDC_DISCOVERY=true
-    volumes:
-      - ./oauth2NOUPOUE/.htpasswd:/etc/oauth2-proxy/.htpasswd:ro
     networks:
       - noupoue-network
 ```
