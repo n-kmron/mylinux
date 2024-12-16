@@ -36,3 +36,10 @@
 * Even with the docker network, in the `index.html` when I used `backendNOUPOUE`, the websocket was not established (saw in navigator console) so I put the ip instead
 
 * On the step 6, I was not able to pull up the docker image (for mongo:4.4) because my Gentoo was not on the right date and time so the certificate verification failed -> `date 241204 10:43:05`
+
+* When I applied my .yaml deployment, the frontend did not run because in the index.html, I kept a static ip instead of put the container name, so the wrong ip was there. I had to go back to my Gentoo, change the file, rebuild the image and redo copy it to the .202
+
+* The mongo yaml is good
+* I have to modify in the frontend : index.html (enlever le static) and etc config.nginx backendnoupoue instead of backendNOUPOUE
+* Modifier aussi le tout en local sur le gentoo
+* Faire tourner le mongo en local après les modifs
