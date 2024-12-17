@@ -201,7 +201,7 @@ networks:
 * `docker-compose -f docker-compose.yml up -d --scale backendnoupoue=2` to split the backend load into 2 containers
 WARNING: to do it, we must remove the `container_name` in the yaml file and the `port 3000` too. We also need to remove in the `index.html` the :3000 port in the `const ws`.
 
-* `tune2fs -l /dev/sda5`
+* `tune2fs -l /dev/sda5` to display detailed information about the file system (ext4)
 
 
 ### Add a container handling authentication for this application using the oauth2-proxy image.
