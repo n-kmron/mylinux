@@ -39,7 +39,4 @@
 
 * When I applied my .yaml deployment, the frontend did not run because in the index.html, I kept a static ip instead of put the container name, so the wrong ip was there. I had to go back to my Gentoo, change the file, rebuild the image and redo copy it to the .202
 
-* The mongo yaml is good
 * I have to modify in the frontend : index.html (enlever le static) and etc config.nginx backendnoupoue instead of backendNOUPOUE
-* Modifier aussi le tout en local sur le gentoo
-* Faire tourner le mongo en local après les modifs
