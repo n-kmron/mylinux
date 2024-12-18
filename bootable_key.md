@@ -96,4 +96,8 @@ After, launch your dhcp
 
 * `udhcpc -i <int> -s /usr/share/udhcpc/default.script`
 
+Then, put the ip gave by the dhcp
+
+* `ip addr add <ip> <mask>`
+
 You maybe have to create this script and add a chmod +x on it.
